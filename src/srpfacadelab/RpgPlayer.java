@@ -59,8 +59,12 @@ public class RpgPlayer {
             return true;
         }
 
-        if (item.isRare())
+        // Play special effect based on item rarity and uniqueness
+        if (item.isRare() && item.isUnique()) {
+            gameEngine.playSpecialEffect("blue_swirly");
+        } else if (item.isRare()) {
             gameEngine.playSpecialEffect("cool_swirly_particles");
+        }
 
         inventory.add(item);
 
@@ -92,6 +96,11 @@ public class RpgPlayer {
     }
 
     public void takeDamage(int damage) {
+        // Reduce damage by 25% if the player is carrying less than half their capacity
+        if (calculateInventoryWeight() < carryingCapacity / 2) {
+            damage = (int)Math.round(damage * 0.75);
+        }
+
         if (damage < armour) {
             gameEngine.playSpecialEffect("parry");
         }
